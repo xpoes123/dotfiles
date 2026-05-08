@@ -22,6 +22,12 @@ elif [[ "$file" == *"/math-rock/"* ]]; then
 elif [[ "$file" == *"/phonk/"* ]]; then
     icon="󰟪"
     genre="phonk"
+elif [[ "$file" == *"/classical/"* ]]; then
+    icon="󰸉"
+    genre="classical"
+elif [[ "$file" == *"/jazz/"* ]]; then
+    icon="󰋋"
+    genre="jazz"
 else
     icon="󰎈"
     genre="music"
