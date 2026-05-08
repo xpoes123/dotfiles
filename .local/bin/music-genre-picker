@@ -1,25 +1,37 @@
 #!/usr/bin/env bash
-# Pick a music genre via rofi. Switches genres if music is already playing.
-# Empty selection = all genres mixed.
+# Music menu. First option pre-selected so Super+M then Enter does the obvious thing:
+#   - When stopped: random (mix all genres)
+#   - When playing: stop
 
 MUSIC_ROOT="$HOME/music"
 LOCK_FILE="/tmp/music-mode.lock"
 
 genres=$(find "$MUSIC_ROOT" -mindepth 1 -maxdepth 1 -type d -printf '%f\n' | sort)
-options="all (mixed)
-$genres"
 
-choice=$(echo "$options" | rofi -dmenu -p "genre" -i)
+if [[ -f "$LOCK_FILE" ]]; then
+    options="stop
+random (all)
+$genres"
+else
+    options="random (all)
+$genres"
+fi
+
+choice=$(echo "$options" | rofi -dmenu -p "music" -i -selected-row 0)
 [[ -z "$choice" ]] && exit 0
 
-# If music is running, stop it first so we can start the new genre
-if [[ -f "$LOCK_FILE" ]]; then
-    /home/david/.local/bin/lofi-toggle
-    sleep 0.3
-fi
-
-if [[ "$choice" == "all (mixed)" ]]; then
-    /home/david/.local/bin/lofi-toggle
-else
-    /home/david/.local/bin/lofi-toggle "$choice"
-fi
+case "$choice" in
+    stop)
+        /home/david/.local/bin/lofi-toggle  # toggle off
+        ;;
+    "random (all)")
+        # If already playing, stop first so we restart with mix
+        [[ -f "$LOCK_FILE" ]] && /home/david/.local/bin/lofi-toggle && sleep 0.3
+        /home/david/.local/bin/lofi-toggle
+        ;;
+    *)
+        # Specific genre — stop current music if playing, then start
+        [[ -f "$LOCK_FILE" ]] && /home/david/.local/bin/lofi-toggle && sleep 0.3
+        /home/david/.local/bin/lofi-toggle "$choice"
+        ;;
+esac
