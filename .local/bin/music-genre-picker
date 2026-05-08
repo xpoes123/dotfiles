@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+# Pick a music genre via rofi. Switches genres if music is already playing.
+# Empty selection = all genres mixed.
+
+MUSIC_ROOT="$HOME/music"
+LOCK_FILE="/tmp/music-mode.lock"
+
+genres=$(find "$MUSIC_ROOT" -mindepth 1 -maxdepth 1 -type d -printf '%f\n' | sort)
+options="all (mixed)
+$genres"
+
+choice=$(echo "$options" | rofi -dmenu -p "genre" -i)
+[[ -z "$choice" ]] && exit 0
+
+# If music is running, stop it first so we can start the new genre
+if [[ -f "$LOCK_FILE" ]]; then
+    /home/david/.local/bin/lofi-toggle
+    sleep 0.3
+fi
+
+if [[ "$choice" == "all (mixed)" ]]; then
+    /home/david/.local/bin/lofi-toggle
+else
+    /home/david/.local/bin/lofi-toggle "$choice"
+fi

@@ -19,6 +19,9 @@ elif [[ "$file" == *"/vaporwave/"* ]]; then
 elif [[ "$file" == *"/math-rock/"* ]]; then
     icon="󰫔"
     genre="math rock"
+elif [[ "$file" == *"/phonk/"* ]]; then
+    icon="󰟪"
+    genre="phonk"
 else
     icon="󰎈"
     genre="music"

@@ -27,7 +27,8 @@ cat <<'EOF' | rofi -dmenu -p "keybinds" -i -no-custom -format i -selected-row 0 
   CapsLock + Shift+]    Move window to next ws
   CapsLock + scroll     Scroll workspaces
 ── MEDIA ─────────────────────────────
-  CapsLock + Shift+M    Toggle lofi music
+  CapsLock + Shift+M    Toggle music (all genres)
+  CapsLock + Shift+G    Pick music genre
   CapsLock + Shift+L    Ambient video mode
   CapsLock + L          Lock screen
 ── TOOLS ─────────────────────────────
