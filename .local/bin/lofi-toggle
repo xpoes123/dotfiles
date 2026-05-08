@@ -7,11 +7,23 @@ MUSIC_DIR="$HOME/music/$GENRE"
 LOCK_FILE="/tmp/music-mode.lock"
 NOW_FILE="/tmp/music-now-playing"
 
+# Helper: hard kill any music mpv processes
+kill_music_mpv() {
+    local pids
+    pids=$(pgrep -f "mpv.*$HOME/music/")
+    [[ -n "$pids" ]] && kill -9 $pids 2>/dev/null
+}
+
 if [[ -f "$LOCK_FILE" ]]; then
     rm -f "$LOCK_FILE" "$NOW_FILE"
-    pkill -f "mpv.*music/"
+    kill_music_mpv
     exit 0
 fi
+
+# Starting fresh — kill any stragglers first
+kill_music_mpv
+rm -f "$NOW_FILE"
+sleep 0.2
 
 touch "$LOCK_FILE"
 
