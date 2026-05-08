@@ -15,10 +15,9 @@ while true; do
         img=$(find "$WALLPAPER_DIR" -type f \( -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.png" -o -iname "*.webp" \) | shuf -n 1)
         [[ -n "$img" ]] && awww img "$img" \
             --outputs "$monitor" \
-            --transition-type wipe \
-            --transition-angle 30 \
-            --transition-duration 2 \
-            --transition-fps 60
+            --transition-type fade \
+            --transition-duration 1 \
+            --transition-fps 30
     done
     sleep "$INTERVAL"
 done

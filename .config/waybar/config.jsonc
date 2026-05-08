@@ -12,7 +12,7 @@
 
     "modules-left": ["hyprland/workspaces"],
     "modules-center": ["hyprland/window"],
-    "modules-right": ["custom/claude-usage", "cpu", "memory", "temperature", "clock"],
+    "modules-right": ["custom/claude-usage", "custom/gpu", "cpu", "memory", "disk", "temperature", "clock"],
 
     "hyprland/workspaces": {
         "format": "{id}",
@@ -31,23 +31,29 @@
     },
 
     "cpu": {
-        "format": "  {usage}%",
+        "format": "CPU {usage}%",
         "interval": 2,
-        "tooltip": false
+        "tooltip-format": "CPU utilization: {usage}%\nLoad: {load}"
     },
 
     "memory": {
-        "format": "  {percentage}%",
+        "format": "RAM {percentage}%",
         "interval": 5,
-        "tooltip": false
+        "tooltip-format": "RAM: {used:0.1f}GiB used / {total:0.1f}GiB total"
+    },
+
+    "disk": {
+        "format": "Disk {percentage_used}%",
+        "interval": 30,
+        "tooltip-format": "Disk: {used} used / {total} total ({free} free)"
     },
 
     "temperature": {
         "hwmon-path": "/sys/class/hwmon/hwmon2/temp1_input",
-        "format": "  {temperatureC}°",
+        "format": "CPU {temperatureC}°",
         "critical-threshold": 85,
         "interval": 5,
-        "tooltip": false
+        "tooltip-format": "CPU temperature: {temperatureC}°C"
     },
 
     "clock": {
@@ -61,6 +67,13 @@
         "exec": "~/.local/bin/claude-usage",
         "return-type": "json",
         "interval": 300,
+        "tooltip": true
+    },
+
+    "custom/gpu": {
+        "exec": "~/.local/bin/waybar-gpu",
+        "return-type": "json",
+        "interval": 2,
         "tooltip": true
     }
 },
@@ -77,7 +90,7 @@
 
     "modules-left": ["hyprland/workspaces"],
     "modules-center": ["hyprland/window"],
-    "modules-right": ["custom/claude-usage", "cpu", "memory", "temperature", "clock"],
+    "modules-right": ["custom/claude-usage", "custom/gpu", "cpu", "memory", "disk", "temperature", "clock"],
 
     "hyprland/workspaces": {
         "format": "{id}",
@@ -96,23 +109,29 @@
     },
 
     "cpu": {
-        "format": "  {usage}%",
+        "format": "CPU {usage}%",
         "interval": 2,
-        "tooltip": false
+        "tooltip-format": "CPU utilization: {usage}%\nLoad: {load}"
     },
 
     "memory": {
-        "format": "  {percentage}%",
+        "format": "RAM {percentage}%",
         "interval": 5,
-        "tooltip": false
+        "tooltip-format": "RAM: {used:0.1f}GiB used / {total:0.1f}GiB total"
+    },
+
+    "disk": {
+        "format": "Disk {percentage_used}%",
+        "interval": 30,
+        "tooltip-format": "Disk: {used} used / {total} total ({free} free)"
     },
 
     "temperature": {
         "hwmon-path": "/sys/class/hwmon/hwmon2/temp1_input",
-        "format": "  {temperatureC}°",
+        "format": "CPU {temperatureC}°",
         "critical-threshold": 85,
         "interval": 5,
-        "tooltip": false
+        "tooltip-format": "CPU temperature: {temperatureC}°C"
     },
 
     "clock": {
@@ -126,6 +145,13 @@
         "exec": "~/.local/bin/claude-usage",
         "return-type": "json",
         "interval": 300,
+        "tooltip": true
+    },
+
+    "custom/gpu": {
+        "exec": "~/.local/bin/waybar-gpu",
+        "return-type": "json",
+        "interval": 2,
         "tooltip": true
     }
 }
