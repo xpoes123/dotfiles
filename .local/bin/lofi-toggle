@@ -1,13 +1,17 @@
 #!/usr/bin/env bash
-# Toggle music. Plays random tracks in a loop until toggled off.
-# Pass "vaporwave" as arg to play from vaporwave dir; defaults to lofi.
+# Toggle music. Plays random tracks across all genre folders in ~/music.
+# Pass a genre name (e.g. "lofi" or "vaporwave") to restrict to that folder.
 
-GENRE="${1:-lofi}"
-MUSIC_DIR="$HOME/music/$GENRE"
+MUSIC_ROOT="$HOME/music"
 LOCK_FILE="/tmp/music-mode.lock"
 NOW_FILE="/tmp/music-now-playing"
 
-# Helper: hard kill any music mpv processes
+if [[ -n "$1" ]]; then
+    SEARCH_DIR="$MUSIC_ROOT/$1"
+else
+    SEARCH_DIR="$MUSIC_ROOT"
+fi
+
 kill_music_mpv() {
     local pids
     pids=$(pgrep -f "mpv.*$HOME/music/")
@@ -20,7 +24,7 @@ if [[ -f "$LOCK_FILE" ]]; then
     exit 0
 fi
 
-# Starting fresh — kill any stragglers first
+# Starting fresh
 kill_music_mpv
 rm -f "$NOW_FILE"
 sleep 0.2
@@ -30,7 +34,7 @@ touch "$LOCK_FILE"
 (
     first=1
     while [[ -f "$LOCK_FILE" ]]; do
-        file=$(find "$MUSIC_DIR" -type f \( -iname "*.mp3" -o -iname "*.m4a" -o -iname "*.opus" -o -iname "*.webm" \) | shuf -n 1)
+        file=$(find "$SEARCH_DIR" -type f \( -iname "*.mp3" -o -iname "*.m4a" -o -iname "*.opus" -o -iname "*.webm" \) | shuf -n 1)
         [[ -z "$file" ]] && sleep 5 && continue
 
         echo "$file" > "$NOW_FILE"
