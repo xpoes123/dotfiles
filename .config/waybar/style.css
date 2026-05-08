@@ -1,0 +1,85 @@
+/* Tokyo Night palette */
+@define-color base    #1a1b26;
+@define-color surface #24283b;
+@define-color overlay #414868;
+@define-color muted   #565f89;
+@define-color text    #c0caf5;
+@define-color blue    #7aa2f7;
+@define-color cyan    #7dcfff;
+@define-color green   #9ece6a;
+@define-color yellow  #e0af68;
+@define-color red     #f7768e;
+
+* {
+    font-family: "MesloLGM Nerd Font Mono", monospace;
+    font-size: 13px;
+    border: none;
+    border-radius: 0;
+    min-height: 0;
+    box-shadow: none;
+}
+
+window#waybar {
+    background: @base;
+    color: @text;
+    border-radius: 8px;
+    border: 1px solid @surface;
+}
+
+/* Workspaces */
+#workspaces {
+    padding: 0 6px;
+}
+
+#workspaces button {
+    color: @muted;
+    padding: 2px 10px;
+    background: transparent;
+    border-radius: 6px;
+    transition: color 0.15s ease, background 0.15s ease;
+}
+
+#workspaces button.active {
+    color: @blue;
+    background: @surface;
+}
+
+#workspaces button:hover {
+    color: @text;
+    background: @overlay;
+}
+
+/* Window title */
+#window {
+    color: @muted;
+    font-style: italic;
+    padding: 0 16px;
+}
+
+window#waybar.empty #window {
+    opacity: 0;
+}
+
+/* Right modules */
+#cpu, #memory, #temperature, #clock {
+    padding: 0 14px;
+}
+
+#cpu      { color: @green;  }
+#memory   { color: @cyan;   }
+#temperature { color: @yellow; }
+#clock    { color: @blue;   }
+
+#temperature.critical {
+    color: @red;
+    animation: blink 1s step-start infinite;
+}
+
+@keyframes blink {
+    50% { opacity: 0.4; }
+}
+
+/* Subtle divider before clock */
+#clock {
+    border-left: 1px solid @overlay;
+}

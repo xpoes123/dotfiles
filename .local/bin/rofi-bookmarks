@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+BOOKMARKS="$HOME/.config/rofi/bookmarks"
+choice=$(awk -F'|' '{print $1}' "$BOOKMARKS" | rofi -dmenu -p "open")
+[ -z "$choice" ] && exit 0
+target=$(awk -F'|' -v name="$choice" '$1 == name {print $2}' "$BOOKMARKS")
+[ -z "$target" ] && exit 0
+
+if [[ "$target" == code:* ]]; then
+    path="${target#code:}"
+    kitty --working-directory "$path" -e claude --dangerously-skip-permissions &
+elif [[ "$target" == dir:* ]]; then
+    path="${target#dir:}"
+    kitty --working-directory "$path" &
+else
+    zen-browser "$target" &
+    hyprctl dispatch workspace 9
+fi

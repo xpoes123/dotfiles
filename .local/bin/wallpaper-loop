@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+# Rotate wallpaper. Run from Hyprland exec-once or swayidle resume.
+
+exec 9>/tmp/wallpaper-loop.lock
+flock -n 9 || exit 1
+
+WALLPAPER_DIR="$HOME/wallpapers"
+INTERVAL=300
+
+# Wait for awww-daemon to be ready
+sleep 2
+
+while true; do
+    for monitor in $(hyprctl monitors -j | python3 -c "import json,sys; [print(m['name']) for m in json.load(sys.stdin)]"); do
+        img=$(find "$WALLPAPER_DIR" -type f \( -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.png" -o -iname "*.webp" \) | shuf -n 1)
+        [[ -n "$img" ]] && awww img "$img" \
+            --outputs "$monitor" \
+            --transition-type wipe \
+            --transition-angle 30 \
+            --transition-duration 2 \
+            --transition-fps 60
+    done
+    sleep "$INTERVAL"
+done

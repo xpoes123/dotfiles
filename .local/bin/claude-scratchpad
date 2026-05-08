@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+# Toggle a floating kitty terminal running Claude.
+# Launches it on first press, then toggles visibility.
+# Resizes to a third of the current monitor each time it appears.
+
+resize_for_monitor() {
+    hyprctl monitors -j | python3 -c "
+import json, sys, subprocess
+monitors = json.load(sys.stdin)
+focused = next((m for m in monitors if m['focused']), monitors[0])
+w = int(focused['width'] / focused['scale'] * 0.35)
+h = int(focused['height'] / focused['scale'] * 0.55)
+subprocess.run(['hyprctl', 'dispatch', 'resizewindowpixel', f'exact {w} {h},class:kitty-claude'])
+subprocess.run(['hyprctl', 'dispatch', 'centerwindow', ',class:kitty-claude'])
+"
+}
+
+if ! hyprctl clients -j | grep -q '"class": "kitty-claude"'; then
+    kitty --class kitty-claude -e claude --model sonnet --dangerously-skip-permissions &
+else
+    hyprctl dispatch togglespecialworkspace claude
+    sleep 0.15
+    resize_for_monitor
+fi

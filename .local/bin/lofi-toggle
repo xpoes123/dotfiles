@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+# Toggle lofi music. If playing, stop it. If stopped, pick a random track at a random position.
+
+MUSIC_DIR="$HOME/music/lofi"
+
+if pgrep -f "mpv.*music/lofi" > /dev/null; then
+    pkill -f "mpv.*music/lofi"
+    exit 0
+fi
+
+file=$(find "$MUSIC_DIR" -type f \( -iname "*.mp3" -o -iname "*.m4a" -o -iname "*.opus" -o -iname "*.webm" \) | shuf -n 1)
+[[ -z "$file" ]] && exit 1
+
+# Random start position between 0-75% through the track
+start=$((RANDOM % 75))
+mpv --no-video --start="${start}%" "$file" &

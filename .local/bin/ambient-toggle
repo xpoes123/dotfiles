@@ -1,0 +1,56 @@
+#!/usr/bin/env bash
+# Toggle ambient video mode.
+# First press: save both monitors' workspaces, switch both to empty workspaces, play video.
+# Second press: stop video, restore both monitors to saved workspaces.
+
+LOCK_FILE="/tmp/ambient-mode.lock"
+WORKSPACE_FILE="/tmp/ambient-workspace"
+
+if [[ -f "$LOCK_FILE" ]]; then
+    rm "$LOCK_FILE"
+    pkill -f video-wallpaper
+    pkill mpvpaper
+    pkill wallpaper-loop
+
+    # Restore both monitors to their saved workspaces
+    hyprctl monitors -j | python3 -c "
+import json, sys
+monitors = json.load(sys.stdin)
+for m in monitors:
+    print(m['name'])
+" | while read -r monitor; do
+        saved=$(grep "^$monitor " "$WORKSPACE_FILE" 2>/dev/null | awk '{print $2}')
+        if [[ -n "$saved" ]]; then
+            hyprctl dispatch focusmonitor "$monitor"
+            hyprctl dispatch workspace "$saved"
+        fi
+    done
+
+    /home/david/.local/bin/wallpaper-loop &
+else
+    touch "$LOCK_FILE"
+
+    # Save each monitor's current workspace
+    hyprctl monitors -j | python3 -c "
+import json, sys
+monitors = json.load(sys.stdin)
+for m in monitors:
+    print(m['name'], m['activeWorkspace']['id'])
+" > "$WORKSPACE_FILE" 2>/dev/null
+
+    # Switch each monitor to its own empty high workspace (100, 101, ...)
+    i=0
+    hyprctl monitors -j | python3 -c "
+import json, sys
+monitors = json.load(sys.stdin)
+for m in monitors:
+    print(m['name'])
+" | while read -r monitor; do
+        hyprctl dispatch focusmonitor "$monitor"
+        hyprctl dispatch workspace $((99 + i))
+        i=$((i + 1))
+    done
+
+    pkill wallpaper-loop
+    /home/david/.local/bin/video-wallpaper &
+fi

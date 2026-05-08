@@ -1,0 +1,117 @@
+#!/usr/bin/env python3
+"""Show Claude Max session/weekly usage % in Waybar via rate limit response headers."""
+
+import json
+import os
+import time
+import urllib.request
+import urllib.error
+from datetime import datetime, timezone
+
+CACHE_FILE = "/tmp/claude-rate-limits.json"
+CACHE_TTL = 300  # 5 minutes
+
+def get_cached():
+    try:
+        with open(CACHE_FILE) as f:
+            data = json.load(f)
+        if time.time() - data.get("timestamp", 0) < CACHE_TTL:
+            return data
+    except:
+        pass
+    return None
+
+def fmt_reset(iso):
+    if not iso:
+        return ""
+    try:
+        t = datetime.fromisoformat(iso.replace("Z", "+00:00"))
+        now = datetime.now(timezone.utc)
+        diff = t - now
+        total = int(diff.total_seconds())
+        if total <= 0:
+            return "resetting soon"
+        h, rem = divmod(total, 3600)
+        m = rem // 60
+        if h > 24:
+            return f"resets in {h//24}d {h%24}h"
+        if h > 0:
+            return f"resets in {h}h {m}m"
+        return f"resets in {m}m"
+    except:
+        return ""
+
+def fetch():
+    creds_file = os.path.expanduser("~/.claude/.credentials.json")
+    with open(creds_file) as f:
+        creds = json.load(f)
+    token = creds.get("claudeAiOauth", {}).get("accessToken")
+    if not token:
+        return None
+
+    payload = json.dumps({
+        "model": "claude-haiku-4-5-20251001",
+        "max_tokens": 1,
+        "messages": [{"role": "user", "content": "."}]
+    }).encode()
+
+    req = urllib.request.Request(
+        "https://api.anthropic.com/v1/messages",
+        data=payload,
+        headers={
+            "Content-Type": "application/json",
+            "anthropic-version": "2023-06-01",
+            "Authorization": f"Bearer {token}"
+        }
+    )
+
+    def parse_headers(headers):
+        h = {k.lower(): v for k, v in headers.items()}
+        def pct(key):
+            v = h.get(f"anthropic-ratelimit-unified-{key}-utilization")
+            return round(float(v) * 100, 1) if v else None
+        def rst(key):
+            v = h.get(f"anthropic-ratelimit-unified-{key}-reset", "")
+            # Convert Unix timestamp to ISO string if needed
+            if v and v.isdigit():
+                return datetime.fromtimestamp(int(v), tz=timezone.utc).isoformat()
+            return v
+        return {
+            "session_pct": pct("5h"),
+            "session_reset": rst("5h"),
+            "weekly_pct": pct("7d"),
+            "weekly_reset": rst("7d"),
+            "sonnet_pct": pct("7d-sonnet"),
+            "timestamp": time.time()
+        }
+
+    try:
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            return parse_headers(resp.headers)
+    except urllib.error.HTTPError as e:
+        return parse_headers(e.headers)
+
+# Get data (cached or fresh)
+data = get_cached()
+if not data:
+    try:
+        data = fetch()
+        if data:
+            with open(CACHE_FILE, "w") as f:
+                json.dump(data, f)
+    except Exception as e:
+        data = None
+
+if not data or data.get("session_pct") is None:
+    print(json.dumps({"text": "󰧑 ?", "tooltip": "Claude usage unavailable", "class": "claude-usage"}))
+else:
+    s = data["session_pct"]
+    w = data["weekly_pct"] or 0
+    text = f"󰧑 {s:.0f}% · {w:.0f}%"
+    tooltip = (
+        f"Session (5h): {s:.1f}% used — {fmt_reset(data['session_reset'])}\n"
+        f"Weekly: {w:.1f}% used — {fmt_reset(data['weekly_reset'])}"
+    )
+    if data.get("sonnet_pct") is not None:
+        tooltip += f"\nSonnet only: {data['sonnet_pct']:.1f}%"
+    print(json.dumps({"text": text, "tooltip": tooltip, "class": "claude-usage"}))

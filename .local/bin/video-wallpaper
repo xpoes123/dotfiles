@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+# Play random videos as wallpaper, switching every 5 minutes.
+# Uses mpv IPC to swap videos without unmapping — prevents wallpaper flash on transition.
+
+VIDEO_DIR="$HOME/wallpapers/videos"
+DURATION=180  # seconds per video
+SOCKET="/tmp/mpvpaper-ipc"
+
+pick_random() {
+    find "$VIDEO_DIR" -type f \( -iname "*.mp4" -o -iname "*.mkv" -o -iname "*.webm" \) | shuf -n 1
+}
+
+# Start mpvpaper with IPC socket and first video
+first=$(pick_random)
+mpvpaper -f "*" "$first" -o "no-audio input-ipc-server=$SOCKET loop=no" &
+MPVPAPER_PID=$!
+sleep 2  # give it time to start
+
+while true; do
+    sleep "$DURATION"
+
+    next=$(pick_random)
+    [[ -z "$next" ]] && continue
+
+    # Send loadfile command via IPC — swaps video without stopping mpvpaper
+    if [[ -S "$SOCKET" ]]; then
+        echo '{"command":["loadfile","'"$next"'"]}' | socat - "$SOCKET" 2>/dev/null
+    else
+        # Fallback: restart if socket disappeared
+        kill "$MPVPAPER_PID" 2>/dev/null
+        mpvpaper -f "*" "$next" -o "no-audio input-ipc-server=$SOCKET loop=no" &
+        MPVPAPER_PID=$!
+        sleep 2
+    fi
+done

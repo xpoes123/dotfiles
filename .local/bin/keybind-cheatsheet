@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+# Show keybind reference in rofi
+cat <<'EOF' | rofi -dmenu -p "keybinds" -i -no-custom -format i -selected-row 0 > /dev/null
+── APPS ──────────────────────────────
+  CapsLock + Q          Terminal (kitty)
+  CapsLock + R          App launcher (rofi)
+  CapsLock + B          Bookmarks launcher
+  CapsLock + grave      Claude scratchpad
+  CapsLock + 9          Zen Browser (ws 9)
+  CapsLock + A          Discord (ws 101)
+  CapsLock + 0          Workspace 10
+── WINDOWS ───────────────────────────
+  CapsLock + C          Close window
+  CapsLock + F          Fullscreen
+  CapsLock + Shift+V    Toggle floating
+  CapsLock + arrows     Move focus
+  CapsLock + Alt+arrows Resize window
+  CapsLock + Shift+,    Move to left monitor
+  CapsLock + Shift+.    Move to right monitor
+  CapsLock + ,          Focus left monitor
+  CapsLock + .          Focus right monitor
+── WORKSPACES ────────────────────────
+  CapsLock + 1-9        Switch workspace
+  CapsLock + Tab        Previous workspace
+  CapsLock + Shift+1-9  Move window to workspace
+  CapsLock + Shift+[    Move window to prev ws
+  CapsLock + Shift+]    Move window to next ws
+  CapsLock + scroll     Scroll workspaces
+── MEDIA ─────────────────────────────
+  CapsLock + Shift+M    Toggle lofi music
+  CapsLock + Shift+L    Ambient video mode
+  CapsLock + L          Lock screen
+── TOOLS ─────────────────────────────
+  CapsLock + V          Clipboard history
+  CapsLock + Shift+S    Screenshot region
+  CapsLock + Shift+W    Screenshot window
+  CapsLock + Shift+F    Screenshot monitor
+  Alt + Tab             Window switcher
+  Alt + Shift+Tab       Window switcher (back)
+EOF
