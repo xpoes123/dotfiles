@@ -31,26 +31,26 @@
     },
 
     "cpu": {
-        "format": "CPU {usage}%",
+        "format": "cpu {usage}",
         "interval": 2,
         "tooltip-format": "CPU utilization: {usage}%\nLoad: {load}"
     },
 
     "memory": {
-        "format": "RAM {percentage}%",
+        "format": "ram {percentage}",
         "interval": 5,
         "tooltip-format": "RAM: {used:0.1f}GiB used / {total:0.1f}GiB total"
     },
 
     "disk": {
-        "format": "Disk {percentage_used}%",
+        "format": "ssd {percentage_used}",
         "interval": 30,
         "tooltip-format": "Disk: {used} used / {total} total ({free} free)"
     },
 
     "temperature": {
         "hwmon-path": "/sys/class/hwmon/hwmon2/temp1_input",
-        "format": "CPU {temperatureC}°",
+        "format": "{temperatureC}°",
         "critical-threshold": 85,
         "interval": 5,
         "tooltip-format": "CPU temperature: {temperatureC}°C"
@@ -116,26 +116,26 @@
     },
 
     "cpu": {
-        "format": "CPU {usage}%",
+        "format": "cpu {usage}",
         "interval": 2,
         "tooltip-format": "CPU utilization: {usage}%\nLoad: {load}"
     },
 
     "memory": {
-        "format": "RAM {percentage}%",
+        "format": "ram {percentage}",
         "interval": 5,
         "tooltip-format": "RAM: {used:0.1f}GiB used / {total:0.1f}GiB total"
     },
 
     "disk": {
-        "format": "Disk {percentage_used}%",
+        "format": "ssd {percentage_used}",
         "interval": 30,
         "tooltip-format": "Disk: {used} used / {total} total ({free} free)"
     },
 
     "temperature": {
         "hwmon-path": "/sys/class/hwmon/hwmon2/temp1_input",
-        "format": "CPU {temperatureC}°",
+        "format": "{temperatureC}°",
         "critical-threshold": 85,
         "interval": 5,
         "tooltip-format": "CPU temperature: {temperatureC}°C"

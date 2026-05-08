@@ -8,7 +8,10 @@
 @define-color cyan    #7dcfff;
 @define-color green   #9ece6a;
 @define-color yellow  #e0af68;
+@define-color orange  #ff9e64;
 @define-color red     #f7768e;
+@define-color magenta #bb9af7;
+@define-color pink    #ff75a0;
 
 * {
     font-family: "MesloLGM Nerd Font Mono", monospace;
@@ -60,15 +63,46 @@ window#waybar.empty #window {
     opacity: 0;
 }
 
-/* Right modules */
-#cpu, #memory, #temperature, #clock {
-    padding: 0 14px;
+/* Right module spacing */
+#custom-music,
+#custom-claude-usage,
+#custom-gpu,
+#cpu,
+#memory,
+#disk,
+#temperature,
+#clock {
+    padding: 0 8px;
 }
 
-#cpu      { color: @green;  }
-#memory   { color: @cyan;   }
-#temperature { color: @yellow; }
-#clock    { color: @blue;   }
+/* Color coding by domain */
+#custom-music         { color: @pink;    }
+#custom-claude-usage  { color: @orange;  }
+#custom-gpu           { color: @magenta; }
+#cpu                  { color: @green;   }
+#memory               { color: @cyan;    }
+#disk                 { color: @yellow;  }
+#temperature          { color: @yellow;  }
+#clock                {
+    color: @blue;
+    border-left: 1px solid @overlay;
+    margin-left: 4px;
+    padding-left: 12px;
+}
+
+/* Group system metrics with subtle background */
+#custom-gpu, #cpu, #memory, #disk, #temperature {
+    background: @surface;
+}
+#custom-gpu      { border-radius: 6px 0 0 6px; padding-left: 10px; }
+#temperature     { border-radius: 0 6px 6px 0; padding-right: 10px; }
+
+/* Hide empty modules cleanly */
+#custom-music.empty,
+#custom-claude-usage.empty {
+    padding: 0;
+    margin: 0;
+}
 
 #temperature.critical {
     color: @red;
@@ -77,9 +111,4 @@ window#waybar.empty #window {
 
 @keyframes blink {
     50% { opacity: 0.4; }
-}
-
-/* Subtle divider before clock */
-#clock {
-    border-left: 1px solid @overlay;
 }

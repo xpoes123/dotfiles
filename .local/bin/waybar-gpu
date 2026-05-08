@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 util=$(nvidia-smi --query-gpu=utilization.gpu --format=csv,noheader,nounits 2>/dev/null | tr -d ' ')
 mem=$(nvidia-smi --query-gpu=memory.used,memory.total --format=csv,noheader,nounits 2>/dev/null | awk -F', ' '{printf "%dMiB / %dMiB", $1, $2}')
-echo "{\"text\": \"GPU ${util}%\", \"tooltip\": \"GPU: ${util}% utilization\\nVRAM: ${mem}\"}"
+echo "{\"text\": \"gpu ${util}\", \"tooltip\": \"GPU: ${util}% utilization\\nVRAM: ${mem}\"}"
