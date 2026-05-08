@@ -1,26 +1,29 @@
 #!/usr/bin/env bash
-# Toggle lofi music. Plays random tracks in a loop until toggled off.
+# Toggle music. Plays random tracks in a loop until toggled off.
+# Pass "vaporwave" as arg to play from vaporwave dir; defaults to lofi.
 
-MUSIC_DIR="$HOME/music/lofi"
-LOCK_FILE="/tmp/lofi-mode.lock"
+GENRE="${1:-lofi}"
+MUSIC_DIR="$HOME/music/$GENRE"
+LOCK_FILE="/tmp/music-mode.lock"
+NOW_FILE="/tmp/music-now-playing"
 
 if [[ -f "$LOCK_FILE" ]]; then
-    rm "$LOCK_FILE"
-    pkill -f "mpv.*music/lofi"
+    rm -f "$LOCK_FILE" "$NOW_FILE"
+    pkill -f "mpv.*music/"
     exit 0
 fi
 
 touch "$LOCK_FILE"
 
-# Background loop: keep playing random tracks until lock file is removed
 (
     first=1
     while [[ -f "$LOCK_FILE" ]]; do
         file=$(find "$MUSIC_DIR" -type f \( -iname "*.mp3" -o -iname "*.m4a" -o -iname "*.opus" -o -iname "*.webm" \) | shuf -n 1)
         [[ -z "$file" ]] && sleep 5 && continue
 
+        echo "$file" > "$NOW_FILE"
+
         if [[ $first -eq 1 ]]; then
-            # First track: random start position
             start=$((RANDOM % 75))
             mpv --no-video --start="${start}%" "$file"
             first=0
@@ -28,5 +31,6 @@ touch "$LOCK_FILE"
             mpv --no-video "$file"
         fi
     done
+    rm -f "$NOW_FILE"
 ) &
 disown

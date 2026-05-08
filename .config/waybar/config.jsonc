@@ -12,7 +12,7 @@
 
     "modules-left": ["hyprland/workspaces"],
     "modules-center": ["hyprland/window"],
-    "modules-right": ["custom/claude-usage", "custom/gpu", "cpu", "memory", "disk", "temperature", "clock"],
+    "modules-right": ["custom/music", "custom/claude-usage", "custom/gpu", "cpu", "memory", "disk", "temperature", "clock"],
 
     "hyprland/workspaces": {
         "format": "{id}",
@@ -74,6 +74,13 @@
         "exec": "~/.local/bin/waybar-gpu",
         "return-type": "json",
         "interval": 2,
+        "tooltip": true
+    },
+
+    "custom/music": {
+        "exec": "~/.local/bin/waybar-music",
+        "return-type": "json",
+        "interval": 3,
         "tooltip": true
     }
 },
@@ -90,7 +97,7 @@
 
     "modules-left": ["hyprland/workspaces"],
     "modules-center": ["hyprland/window"],
-    "modules-right": ["custom/claude-usage", "custom/gpu", "cpu", "memory", "disk", "temperature", "clock"],
+    "modules-right": ["custom/music", "custom/claude-usage", "custom/gpu", "cpu", "memory", "disk", "temperature", "clock"],
 
     "hyprland/workspaces": {
         "format": "{id}",
@@ -152,6 +159,13 @@
         "exec": "~/.local/bin/waybar-gpu",
         "return-type": "json",
         "interval": 2,
+        "tooltip": true
+    },
+
+    "custom/music": {
+        "exec": "~/.local/bin/waybar-music",
+        "return-type": "json",
+        "interval": 3,
         "tooltip": true
     }
 }

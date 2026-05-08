@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+NOW_FILE="/tmp/music-now-playing"
+
+if [[ ! -f "$NOW_FILE" ]]; then
+    echo '{"text": "", "tooltip": ""}'
+    exit 0
+fi
+
+file=$(cat "$NOW_FILE")
+[[ -z "$file" ]] && echo '{"text": "", "tooltip": ""}' && exit 0
+
+# Determine genre from path
+if [[ "$file" == *"/lofi/"* ]]; then
+    icon="󰽴"
+    genre="lofi"
+elif [[ "$file" == *"/vaporwave/"* ]]; then
+    icon="󱄂"
+    genre="vaporwave"
+else
+    icon="󰎈"
+    genre="music"
+fi
+
+title=$(basename "$file" | sed 's/\.[^.]*$//')
+short=$(echo "$title" | cut -c 1-30)
+
+# Escape quotes for JSON
+title_escaped=$(echo "$title" | sed 's/"/\\"/g')
+
+echo "{\"text\": \"$icon $genre\", \"tooltip\": \"Now playing: $title_escaped\"}"
