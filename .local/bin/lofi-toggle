@@ -1,16 +1,32 @@
 #!/usr/bin/env bash
-# Toggle lofi music. If playing, stop it. If stopped, pick a random track at a random position.
+# Toggle lofi music. Plays random tracks in a loop until toggled off.
 
 MUSIC_DIR="$HOME/music/lofi"
+LOCK_FILE="/tmp/lofi-mode.lock"
 
-if pgrep -f "mpv.*music/lofi" > /dev/null; then
+if [[ -f "$LOCK_FILE" ]]; then
+    rm "$LOCK_FILE"
     pkill -f "mpv.*music/lofi"
     exit 0
 fi
 
-file=$(find "$MUSIC_DIR" -type f \( -iname "*.mp3" -o -iname "*.m4a" -o -iname "*.opus" -o -iname "*.webm" \) | shuf -n 1)
-[[ -z "$file" ]] && exit 1
+touch "$LOCK_FILE"
 
-# Random start position between 0-75% through the track
-start=$((RANDOM % 75))
-mpv --no-video --start="${start}%" "$file" &
+# Background loop: keep playing random tracks until lock file is removed
+(
+    first=1
+    while [[ -f "$LOCK_FILE" ]]; do
+        file=$(find "$MUSIC_DIR" -type f \( -iname "*.mp3" -o -iname "*.m4a" -o -iname "*.opus" -o -iname "*.webm" \) | shuf -n 1)
+        [[ -z "$file" ]] && sleep 5 && continue
+
+        if [[ $first -eq 1 ]]; then
+            # First track: random start position
+            start=$((RANDOM % 75))
+            mpv --no-video --start="${start}%" "$file"
+            first=0
+        else
+            mpv --no-video "$file"
+        fi
+    done
+) &
+disown
