@@ -5,6 +5,7 @@ cat <<'EOF' | rofi -dmenu -p "keybinds" -i -no-custom -format i -selected-row 0 
   CapsLock + Q          Terminal (kitty)
   CapsLock + R          App launcher (rofi)
   CapsLock + B          Bookmarks launcher
+  CapsLock + X          Command menu
   CapsLock + grave      Claude scratchpad
   CapsLock + 9          Zen Browser (ws 9)
   CapsLock + A          Discord (ws 101)

@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# Run a command from ~/.config/rofi/commands via rofi.
+# File format: one per line — `Name|shell command`
+
+COMMANDS="$HOME/.config/rofi/commands"
+
+choice=$(awk -F'|' '{print $1}' "$COMMANDS" | rofi -dmenu -p "run" -i)
+[[ -z "$choice" ]] && exit 0
+
+cmd=$(awk -F'|' -v name="$choice" '$1 == name {sub(/^[^|]*\|/, ""); print}' "$COMMANDS")
+[[ -n "$cmd" ]] && eval "$cmd"

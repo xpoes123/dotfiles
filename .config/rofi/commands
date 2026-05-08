@@ -1,0 +1,6 @@
+Kill all Claude sessions|pkill -x claude
+Reload Hyprland|hyprctl reload
+Restart Waybar|pkill waybar; waybar &disown
+Clear clipboard history|cliphist wipe
+Stop ambient mode|kill -9 $(pgrep mpv) 2>/dev/null; rm -f /tmp/ambient-mode.lock
+Stop music|/home/david/.local/bin/lofi-toggle
